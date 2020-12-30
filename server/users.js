@@ -29,7 +29,7 @@ const removeUser = (id) => {
 
 const getUser = (id) => users.find((user) => user.id === id);       // Return the user with the corresponding ID
 
-const getUsersInRoom = () => users.filter((user) => user.room === room);    // get the users in a sppecific room
+const getUsersInRoom = (room) => users.filter((user) => user.room === room);    // get the users in a sppecific room
 
 
 module.exports = { addUser, removeUser, getUser, getUsersInRoom }
