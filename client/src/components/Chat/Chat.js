@@ -10,6 +10,8 @@ import './Chat.css';
 const Chat = ({ location }) => {
     const [name, setName] = useState('');
     const [room, setRoom] = useState('');
+    const [message, setMessage] = useState('');
+    const [messages, setMessages] = useState([]);
     const ENDPOINT = 'http://localhost:5000';
 
     useEffect(() => {
@@ -21,6 +23,8 @@ const Chat = ({ location }) => {
 
         setName(name);
         setRoom(room);
+
+        console.log(socket);
 
         // socket.emit('join', {name: name, room: room});   // Passing datas : name as name & room as room
         socket.emit('join', {name, room}, () => {
@@ -34,9 +38,39 @@ const Chat = ({ location }) => {
         }
 
     }, [ENDPOINT, location.search]);
-    
-    return (
-        <h1>Chat</h1>    
+
+    useEffect(() => {
+        /******** RECEIVE MESSAGE FROM THE SERVER ****/
+        socket.on('message', (message) => {
+            setMessages([...messages, message]);    // Add new message to our Messages Array
+        });
+    }, [messages]);
+
+
+    // Function for Sending Messages
+    /******** SEND MESSAGE TO THE SERVER ****/
+    const sendMessage = (event) => {
+        event.preventDefault();     // Prevent refreshing the page
+
+        if (message) {
+            // socket.emit( messageId, messageContent, callback);
+            socket.emit('sendMessage', message, () => setMessage(''));
+        }
+    }
+
+    console.log(message, messages);
+
+    return (        
+        <div className="outerContainer">
+            <div className="container">
+                <h1>Chat</h1>
+                <input 
+                value={message} 
+                onChange={ (event) => setMessage(event.target.value) }
+                onKeyPress={ (event) => event.key === 'Enter' ? sendMessage(event) : null } 
+                />
+            </div>
+        </div>   
     );
 }
 
